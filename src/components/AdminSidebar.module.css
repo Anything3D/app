@@ -1,0 +1,113 @@
+.sidebar {
+  width: 260px;
+  height: 100vh;
+  background-color: #0f172a; /* Darker to differentiate from standard sidebar */
+  color: #f8fafc;
+  border-right: 1px solid #1e293b;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #f8fafc;
+  border-bottom: 1px solid #1e293b;
+}
+
+.logoIcon {
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #a855f7, #6366f1); /* Purple accent for Admin */
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+}
+
+.nav {
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  color: #94a3b8;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.navLink:hover {
+  background-color: #1e293b;
+  color: #f8fafc;
+  transform: translateX(4px);
+}
+
+.navLink svg {
+  opacity: 0.7;
+}
+
+.navLink:hover svg {
+  opacity: 1;
+  color: #a855f7;
+}
+
+.footer {
+  padding: 1.5rem;
+  border-top: 1px solid #1e293b;
+}
+
+.tenant {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+  cursor: pointer;
+}
+
+.tenant:hover {
+  background-color: #1e293b;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #a855f7;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.tenantInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.tenantName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.tenantRole {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}

@@ -1,0 +1,112 @@
+.sidebar {
+  width: 260px;
+  height: 100vh;
+  background-color: var(--bg-surface);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.logoIcon {
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--success)));
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 15px rgba(var(--primary), 0.4);
+}
+
+.nav {
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.navLink:hover {
+  background-color: var(--bg-surface-hover);
+  color: var(--text-primary);
+  transform: translateX(4px);
+}
+
+.navLink svg {
+  opacity: 0.7;
+}
+
+.navLink:hover svg {
+  opacity: 1;
+  color: hsl(var(--primary));
+}
+
+.footer {
+  padding: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.tenant {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+  cursor: pointer;
+}
+
+.tenant:hover {
+  background-color: var(--bg-surface-hover);
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: hsl(var(--primary));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.tenantInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.tenantName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.tenantRole {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
