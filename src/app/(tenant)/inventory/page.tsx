@@ -51,8 +51,29 @@ export default function Inventory() {
       </div>
 
       <div className="card">
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
-          <input type="text" className="input" placeholder="Search inventory by name or SKU..." style={{ maxWidth: '400px' }} />
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+          <div style={{ position: 'relative', flex: '1', minWidth: '250px', maxWidth: '300px' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--primary)' }}><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><rect x="7" y="7" width="10" height="10"></rect></svg>
+            <input 
+              type="text" 
+              className="input" 
+              placeholder="Quick Scan SKU (Press Enter)..." 
+              style={{ width: '100%', paddingLeft: '2.5rem', borderColor: 'var(--primary)', borderWidth: '2px', backgroundColor: 'rgba(var(--primary-rgb), 0.05)' }} 
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  const sku = e.currentTarget.value;
+                  const found = products.find(p => p.sku.toLowerCase() === sku.toLowerCase());
+                  if (found) {
+                    updateStock(found.id, 1);
+                    e.currentTarget.value = '';
+                  } else {
+                    alert('SKU not found. Please add it first.');
+                  }
+                }
+              }}
+            />
+          </div>
+          <input type="text" className="input" placeholder="Search inventory by name or SKU..." style={{ flex: '2', minWidth: '250px' }} />
           <button className="btn btn-outline">Filter</button>
         </div>
         
@@ -71,7 +92,10 @@ export default function Inventory() {
             </thead>
             <tbody>
               {products.map(product => (
-                <tr key={product.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                <tr key={product.id} style={{ 
+                  borderBottom: '1px solid var(--border-color)',
+                  backgroundColor: product.stock === 0 ? 'rgba(239, 68, 68, 0.05)' : product.stock < product.minStock ? 'rgba(245, 158, 11, 0.05)' : 'transparent'
+                }}>
                   <td style={{ padding: '1rem', fontWeight: 500 }}>{product.name}</td>
                   <td style={{ padding: '1rem', color: 'var(--text-muted)' }}>{product.sku}</td>
                   <td style={{ padding: '1rem' }}>
@@ -89,8 +113,12 @@ export default function Inventory() {
                   <td style={{ padding: '1rem' }}>${product.price.toFixed(2)}</td>
                   <td style={{ padding: '1rem' }}>
                     <span style={{ 
+                      padding: '0.25rem 0.5rem',
+                      borderRadius: 'var(--radius-sm)',
+                      fontSize: '0.875rem',
+                      backgroundColor: product.status === 'In Stock' ? 'rgba(34, 197, 94, 0.1)' : product.status === 'Low Stock' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(239, 68, 68, 0.1)',
                       color: product.status === 'In Stock' ? 'hsl(var(--success))' : product.status === 'Low Stock' ? 'hsl(var(--warning))' : 'hsl(var(--danger))',
-                      fontWeight: 500
+                      fontWeight: 600
                     }}>
                       {product.status}
                     </span>

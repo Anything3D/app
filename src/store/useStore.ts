@@ -2,9 +2,11 @@ import { create } from 'zustand';
 
 export interface Product {
   id: string;
-  name: string;
   sku: string;
+  name: string;
+  category: string;
   stock: number;
+  minStock: number;
   price: number;
   location: {
     storeId: string;
@@ -42,46 +44,61 @@ export interface Tenant {
   joinDate: string;
 }
 
+export interface Supplier {
+  id: string;
+  name: string;
+  contactEmail: string;
+  phone: string;
+  leadTimeDays: number;
+  status: 'Active' | 'Inactive';
+}
+
 interface AppState {
   products: Product[];
   stores: StoreLocation[];
   orders: Order[];
-  tenants: Tenant[];
+  suppliers: Supplier[];
   addProduct: (product: Omit<Product, 'id'>) => void;
   updateStock: (productId: string, quantity: number) => void;
+  updateStoreStock: (storeId: string, productId: string, quantity: number) => void;
   addStore: (store: Omit<StoreLocation, 'id'>) => void;
-  createOrder: (order: Omit<Order, 'id'>) => void;
+  createOrder: (order: Omit<Order, 'id' | 'date'>) => void;
   processOrder: (orderId: string) => void;
-  addTenant: (tenant: Omit<Tenant, 'id' | 'joinDate'>) => void;
-  toggleTenantStatus: (tenantId: string) => void;
+  addSupplier: (supplier: Omit<Supplier, 'id'>) => void;
 }
 
 export const useStore = create<AppState>((set) => ({
   products: [
     {
       id: '1',
-      name: 'Premium Wireless Headphones',
-      sku: 'WH-1000XM4',
+      sku: 'OC-E800',
+      name: 'Office Chair Ergonomic',
+      category: 'Furniture',
       stock: 45,
+      minStock: 10,
       price: 299.99,
       location: { storeId: 's1', aisle: 'A1', rack: 'R2', shelf: 'S3', bin: 'B12' },
       status: 'In Stock',
     },
     {
       id: '2',
-      name: 'Ergonomic Office Chair',
-      sku: 'OC-E800',
+      sku: 'WH-1000XM4',
+      name: 'Premium Wireless Headphones',
+      category: 'Electronics',
       stock: 2,
+      minStock: 5,
       price: 199.50,
       location: { storeId: 's1', aisle: 'C4', rack: 'R1', shelf: 'S1', bin: 'B01' },
       status: 'Low Stock',
     },
     {
       id: '3',
-      name: 'Mechanical Keyboard',
-      sku: 'MK-K2',
-      stock: 120,
-      price: 89.99,
+      sku: 'SD-P200',
+      name: 'Standing Desk Pro',
+      category: 'Furniture',
+      stock: 12,
+      minStock: 15,
+      price: 599.99,
       location: { storeId: 's2', aisle: 'A2', rack: 'R5', shelf: 'S2', bin: 'B44' },
       status: 'In Stock',
     },
@@ -119,22 +136,22 @@ export const useStore = create<AppState>((set) => ({
       date: new Date().toISOString(),
     }
   ],
-  tenants: [
+  suppliers: [
     {
-      id: 't1',
-      name: 'Acme Corp',
-      email: 'admin@acmecorp.com',
-      plan: 'Enterprise',
-      status: 'Active',
-      joinDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+      id: 's1',
+      name: 'Global Furniture Co.',
+      contactEmail: 'orders@globalfurniture.com',
+      phone: '+1-555-0100',
+      leadTimeDays: 14,
+      status: 'Active'
     },
     {
-      id: 't2',
-      name: 'Global Retailers Ltd',
-      email: 'hello@globalretailers.com',
-      plan: 'Pro',
-      status: 'Active',
-      joinDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+      id: 's2',
+      name: 'Techtronics Wholesale',
+      contactEmail: 'sales@techtronics.com',
+      phone: '+1-555-0200',
+      leadTimeDays: 5,
+      status: 'Active'
     }
   ],
 
@@ -149,7 +166,7 @@ export const useStore = create<AppState>((set) => ({
         return { 
           ...p, 
           stock: newStock,
-          status: newStock === 0 ? 'Out of Stock' : newStock < 10 ? 'Low Stock' : 'In Stock'
+            status: newStock === 0 ? 'Out of Stock' : newStock < p.minStock ? 'Low Stock' : 'In Stock'
         };
       }
       return p;
@@ -177,7 +194,7 @@ export const useStore = create<AppState>((set) => ({
           return {
             ...p,
             stock: newStock,
-            status: newStock === 0 ? 'Out of Stock' : newStock < 10 ? 'Low Stock' : 'In Stock'
+              status: newStock === 0 ? 'Out of Stock' : newStock < p.minStock ? 'Low Stock' : 'In Stock'
           };
         }
         return p;
@@ -190,11 +207,7 @@ export const useStore = create<AppState>((set) => ({
     };
   }),
 
-  addTenant: (tenant) => set((state) => ({
-    tenants: [...state.tenants, { ...tenant, id: Math.random().toString(36).substr(2, 9), joinDate: new Date().toISOString() }]
-  })),
-
-  toggleTenantStatus: (tenantId) => set((state) => ({
-    tenants: state.tenants.map(t => t.id === tenantId ? { ...t, status: t.status === 'Active' ? 'Suspended' : 'Active' } : t)
+  addSupplier: (supplier) => set((state) => ({
+    suppliers: [...state.suppliers, { ...supplier, id: Math.random().toString(36).substr(2, 9) }]
   }))
 }));
