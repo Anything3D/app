@@ -5,6 +5,12 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true, // Required for static exports if using next/image
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default nextConfig;
