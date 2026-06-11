@@ -11,7 +11,9 @@ export default function Inventory() {
   const [scanMode, setScanMode] = useState(false);
 
   const [newProduct, setNewProduct] = useState({
-    name: '', sku: '', price: 0, stock: 0,
+    name: '', sku: '', cost: 0, stock: 0, minStock: 5,
+    department: '', machine: '', productNature: '',
+    category: '', category2: '', itemGroup: '',
     location: { aisle: '', rack: '', shelf: '', bin: '' }
   });
 
@@ -29,7 +31,7 @@ export default function Inventory() {
       ...newProduct,
       name: 'Wireless Mouse',
       sku: 'WM-200',
-      price: 49.99
+      cost: 49.99
     });
     setScanMode(false);
   };
@@ -83,9 +85,11 @@ export default function Inventory() {
               <tr style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-muted)' }}>
                 <th style={{ padding: '1rem' }}>Product Name</th>
                 <th style={{ padding: '1rem' }}>SKU</th>
+                <th style={{ padding: '1rem' }}>Department</th>
+                <th style={{ padding: '1rem' }}>Machine</th>
                 <th style={{ padding: '1rem' }}>Stock</th>
                 <th style={{ padding: '1rem' }}>Bin Location</th>
-                <th style={{ padding: '1rem' }}>Price</th>
+                <th style={{ padding: '1rem' }}>Cost</th>
                 <th style={{ padding: '1rem' }}>Status</th>
                 <th style={{ padding: '1rem' }}>Actions</th>
               </tr>
@@ -98,6 +102,8 @@ export default function Inventory() {
                 }}>
                   <td style={{ padding: '1rem', fontWeight: 500 }}>{product.name}</td>
                   <td style={{ padding: '1rem', color: 'var(--text-muted)' }}>{product.sku}</td>
+                  <td style={{ padding: '1rem' }}>{product.department}</td>
+                  <td style={{ padding: '1rem' }}>{product.machine || '-'}</td>
                   <td style={{ padding: '1rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <button className="btn btn-outline" style={{ padding: '0.2rem 0.5rem' }} onClick={() => updateStock(product.id, -1)}>-</button>
@@ -110,7 +116,7 @@ export default function Inventory() {
                       Aisle {product.location.aisle} &bull; Rack {product.location.rack} &bull; Shelf {product.location.shelf}
                     </span>
                   </td>
-                  <td style={{ padding: '1rem' }}>${product.price.toFixed(2)}</td>
+                  <td style={{ padding: '1rem' }}>${product.cost.toFixed(2)}</td>
                   <td style={{ padding: '1rem' }}>
                     <span style={{ 
                       padding: '0.25rem 0.5rem',
@@ -159,16 +165,40 @@ export default function Inventory() {
               <form onSubmit={handleAddSubmit}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
                   <div>
-                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500 }}>Product Name</label>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500 }}>Product Name / Description</label>
                     <input required type="text" className="input" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500 }}>SKU / Barcode</label>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500 }}>SKU / Item no.</label>
                     <input required type="text" className="input" value={newProduct.sku} onChange={e => setNewProduct({...newProduct, sku: e.target.value})} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500 }}>Price ($)</label>
-                    <input required type="number" step="0.01" className="input" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: parseFloat(e.target.value)})} />
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500 }}>Department</label>
+                    <input required type="text" className="input" placeholder="e.g. Spare Parts, Maintenance" value={newProduct.department} onChange={e => setNewProduct({...newProduct, department: e.target.value})} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500 }}>Machine</label>
+                    <input type="text" className="input" placeholder="e.g. ABB" value={newProduct.machine} onChange={e => setNewProduct({...newProduct, machine: e.target.value})} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500 }}>Category 1</label>
+                    <input required type="text" className="input" value={newProduct.category} onChange={e => setNewProduct({...newProduct, category: e.target.value})} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500 }}>Category 2</label>
+                    <input type="text" className="input" value={newProduct.category2} onChange={e => setNewProduct({...newProduct, category2: e.target.value})} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500 }}>Product Nature</label>
+                    <input type="text" className="input" placeholder="e.g. wires, Spindle" value={newProduct.productNature} onChange={e => setNewProduct({...newProduct, productNature: e.target.value})} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500 }}>Item Group</label>
+                    <input type="text" className="input" placeholder="e.g. Critical Spares-CS" value={newProduct.itemGroup} onChange={e => setNewProduct({...newProduct, itemGroup: e.target.value})} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500 }}>Cost ($)</label>
+                    <input required type="number" step="0.01" className="input" value={newProduct.cost} onChange={e => setNewProduct({...newProduct, cost: parseFloat(e.target.value)})} />
                   </div>
                   <div>
                     <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500 }}>Initial Stock Quantity</label>

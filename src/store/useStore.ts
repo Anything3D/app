@@ -4,10 +4,15 @@ export interface Product {
   id: string;
   sku: string;
   name: string;
+  department: string;
   category: string;
+  category2?: string;
+  itemGroup?: string;
+  machine?: string;
+  productNature?: string;
+  cost: number;
   stock: number;
   minStock: number;
-  price: number;
   location: {
     aisle: string;
     rack: string;
@@ -69,35 +74,50 @@ export const useStore = create<AppState>((set) => ({
   products: [
     {
       id: '1',
-      sku: 'OC-E800',
-      name: 'Office Chair Ergonomic',
-      category: 'Furniture',
-      stock: 45,
+      sku: 'ABB-0001',
+      name: 'Package wires on the robot - signal 25463 - ROBOFLEX',
+      department: 'Spare Parts',
+      category: 'Critical Spares',
+      category2: 'Common',
+      itemGroup: 'Critical Spares-CS',
+      machine: 'ABB',
+      productNature: 'wires',
+      cost: 84.21,
+      stock: 20,
       minStock: 10,
-      price: 299.99,
       location: { aisle: 'A1', rack: 'R2', shelf: 'S3', bin: 'B12' },
       status: 'In Stock',
     },
     {
       id: '2',
-      sku: 'WH-1000XM4',
-      name: 'Premium Wireless Headphones',
-      category: 'Electronics',
+      sku: 'ABB-0002',
+      name: 'Package wires on the robot - power supply 29692',
+      department: 'Spare Parts',
+      category: 'Critical Spares',
+      category2: 'Common',
+      itemGroup: 'Critical Spares-CS',
+      machine: 'ABB',
+      productNature: 'wires',
+      cost: 76.19,
       stock: 2,
       minStock: 5,
-      price: 199.50,
-      location: { aisle: 'C4', rack: 'R1', shelf: 'S1', bin: 'B01' },
+      location: { aisle: 'A1', rack: 'R2', shelf: 'S3', bin: 'B13' },
       status: 'Low Stock',
     },
     {
       id: '3',
-      sku: 'SD-P200',
-      name: 'Standing Desk Pro',
-      category: 'Furniture',
-      stock: 12,
-      minStock: 15,
-      price: 599.99,
-      location: { aisle: 'A2', rack: 'R5', shelf: 'S2', bin: 'B44' },
+      sku: 'ABB-0003',
+      name: 'Electrospindle ES350L - H6161H0485 - New',
+      department: 'Spare Parts',
+      category: 'Critical Spares',
+      category2: 'Common',
+      itemGroup: 'Critical Spares-CS',
+      machine: 'ABB',
+      productNature: 'Spindle',
+      cost: 33284.66,
+      stock: 1,
+      minStock: 1,
+      location: { aisle: 'S1', rack: 'R1', shelf: 'S1', bin: 'B01' },
       status: 'In Stock',
     },
   ],

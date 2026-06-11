@@ -8,27 +8,37 @@ export default function Dashboard() {
   const products = useStore(state => state.products);
   const logs = useStore(state => state.logs);
 
-  const totalRevenue = products.reduce((acc, p) => acc + (p.price * p.stock), 0);
+  const totalRevenue = products.reduce((acc, p) => acc + (p.cost * p.stock), 0);
   const totalItems = products.reduce((acc, p) => acc + p.stock, 0);
   const lowStockItems = products.filter(p => p.stock < p.minStock);
   const lowStockCount = lowStockItems.length;
 
-  // Chart Data: Stock value by category
-  const categoryData = products.reduce((acc: any[], product) => {
-    const existing = acc.find(item => item.name === product.category);
+  // Chart Data: Stock value by department
+  const departmentData = products.reduce((acc: any[], product) => {
+    const dept = product.department || 'Unassigned';
+    const existing = acc.find(item => item.name === dept);
     if (existing) {
-      existing.value += product.price * product.stock;
+      existing.value += product.cost * product.stock;
     } else {
-      acc.push({ name: product.category, value: product.price * product.stock });
+      acc.push({ name: dept, value: product.cost * product.stock });
     }
     return acc;
   }, []);
 
-  // Chart Data: Top 5 products by stock quantity
-  const topProductsData = [...products].sort((a, b) => b.stock - a.stock).slice(0, 5).map(p => ({
-    name: p.name.length > 15 ? p.name.substring(0, 15) + '...' : p.name,
-    stock: p.stock
-  }));
+  // Chart Data: Top 5 machines by inventory value
+  const machineValueMap = products.reduce((acc: Record<string, number>, product) => {
+    const mac = product.machine || 'General';
+    acc[mac] = (acc[mac] || 0) + (product.cost * product.stock);
+    return acc;
+  }, {});
+  
+  const topMachinesData = Object.entries(machineValueMap)
+    .sort(([, a], [, b]) => (b as number) - (a as number))
+    .slice(0, 5)
+    .map(([name, value]) => ({
+      name: name.length > 15 ? name.substring(0, 15) + '...' : name,
+      value
+    }));
 
   const COLORS = ['hsl(var(--primary))', 'hsl(var(--accent))', 'hsl(var(--success))', 'hsl(var(--warning))', 'hsl(var(--danger))'];
 
@@ -63,30 +73,31 @@ export default function Dashboard() {
       
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
         <div className="card" style={{ minHeight: '350px' }}>
-          <h2 style={{ marginBottom: '1.5rem', fontSize: '1.25rem' }}>Stock Levels (Top 5 Products)</h2>
+          <h2 style={{ marginBottom: '1.5rem', fontSize: '1.25rem' }}>Inventory Value by Machine (Top 5)</h2>
           <div style={{ height: '300px' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={topProductsData} margin={{ top: 5, right: 20, bottom: 25, left: 0 }}>
+              <BarChart data={topMachinesData} margin={{ top: 5, right: 20, bottom: 25, left: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
                 <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={12} tickMargin={10} />
-                <YAxis stroke="var(--text-muted)" fontSize={12} />
+                <YAxis stroke="var(--text-muted)" fontSize={12} tickFormatter={(val) => '$' + val} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
-                  cursor={{ fill: 'var(--bg-secondary)', opacity: 0.4 }}
+                  formatter={(value: number) => `$${value.toLocaleString()}`}
+                  contentStyle={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                  cursor={{ fill: 'var(--bg-surface-hover)', opacity: 0.4 }}
                 />
-                <Bar dataKey="stock" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         <div className="card" style={{ minHeight: '350px' }}>
-          <h2 style={{ marginBottom: '1.5rem', fontSize: '1.25rem' }}>Inventory Value by Category</h2>
+          <h2 style={{ marginBottom: '1.5rem', fontSize: '1.25rem' }}>Inventory Value by Department</h2>
           <div style={{ height: '300px' }}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={categoryData}
+                  data={departmentData}
                   cx="50%"
                   cy="50%"
                   innerRadius={60}
@@ -95,13 +106,13 @@ export default function Dashboard() {
                   dataKey="value"
                   label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                 >
-                  {categoryData.map((entry, index) => (
+                  {departmentData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip 
                   formatter={(value: number) => `$${value.toLocaleString()}`}
-                  contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                  contentStyle={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
                 />
               </PieChart>
             </ResponsiveContainer>
