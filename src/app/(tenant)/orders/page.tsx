@@ -20,7 +20,6 @@ export default function Orders() {
       ...newOrder,
       type: 'Procurement',
       status: 'Pending',
-      date: new Date().toISOString(),
     });
     setIsModalOpen(false);
   };

@@ -20,7 +20,6 @@ export default function Returns() {
       ...newReturn,
       type: 'Return',
       status: 'Pending',
-      date: new Date().toISOString(),
     });
     setIsModalOpen(false);
   };

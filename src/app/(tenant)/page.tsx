@@ -80,7 +80,7 @@ export default function Dashboard() {
                 <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={12} tickMargin={10} />
                 <YAxis stroke="var(--text-muted)" fontSize={12} tickFormatter={(val) => '$' + val} />
                 <Tooltip 
-                  formatter={(value: number) => `$${value.toLocaleString()}`}
+                  formatter={(value: any) => `$${Number(value).toLocaleString()}`}
                   contentStyle={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
                   cursor={{ fill: 'var(--bg-surface-hover)', opacity: 0.4 }}
                 />
@@ -103,14 +103,14 @@ export default function Dashboard() {
                   outerRadius={100}
                   paddingAngle={5}
                   dataKey="value"
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
                 >
                   {departmentData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip 
-                  formatter={(value: number) => `$${value.toLocaleString()}`}
+                  formatter={(value: any) => `$${Number(value).toLocaleString()}`}
                   contentStyle={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
                 />
               </PieChart>

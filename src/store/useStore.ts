@@ -192,7 +192,7 @@ export const useStore = create<AppState>((set) => ({
         return { 
           ...p, 
           stock: newStock,
-          status: newStock === 0 ? 'Out of Stock' : newStock < p.minStock ? 'Low Stock' : 'In Stock'
+          status: (newStock === 0 ? 'Out of Stock' : newStock < p.minStock ? 'Low Stock' : 'In Stock') as 'In Stock' | 'Low Stock' | 'Out of Stock'
         };
       }
       return p;
@@ -211,7 +211,7 @@ export const useStore = create<AppState>((set) => ({
   }),
 
   createOrder: (order) => set((state) => ({
-    orders: [...state.orders, { ...order, id: Math.random().toString(36).substr(2, 9) }],
+    orders: [...state.orders, { ...order, id: Math.random().toString(36).substr(2, 9), date: new Date().toISOString() }],
     logs: [{
       id: Math.random().toString(36).substr(2, 9),
       action: 'Created Order',
@@ -233,7 +233,7 @@ export const useStore = create<AppState>((set) => ({
           return {
             ...p,
             stock: newStock,
-            status: newStock === 0 ? 'Out of Stock' : newStock < p.minStock ? 'Low Stock' : 'In Stock'
+            status: (newStock === 0 ? 'Out of Stock' : newStock < p.minStock ? 'Low Stock' : 'In Stock') as 'In Stock' | 'Low Stock' | 'Out of Stock'
           };
         }
         return p;
