@@ -6,7 +6,6 @@ import Link from 'next/link';
 
 export default function Dashboard() {
   const products = useStore(state => state.products);
-  const logs = useStore(state => state.logs);
 
   const totalRevenue = products.reduce((acc, p) => acc + (p.cost * p.stock), 0);
   const totalItems = products.reduce((acc, p) => acc + p.stock, 0);
@@ -14,7 +13,7 @@ export default function Dashboard() {
   const lowStockCount = lowStockItems.length;
 
   // Chart Data: Stock value by department
-  const departmentData = products.reduce((acc: any[], product) => {
+  const departmentData = products.reduce((acc: { name: string, value: number }[], product) => {
     const dept = product.department || 'Unassigned';
     const existing = acc.find(item => item.name === dept);
     if (existing) {
@@ -47,7 +46,7 @@ export default function Dashboard() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <div>
           <h1>Dashboard</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Welcome back to StoreSync Pro. Here's what's happening today.</p>
+          <p style={{ color: 'var(--text-secondary)' }}>Welcome back to StoreSync Pro. Here&apos;s what&apos;s happening today.</p>
         </div>
       </div>
 
