@@ -9,7 +9,6 @@ export interface Product {
   minStock: number;
   price: number;
   location: {
-    storeId: string;
     aisle: string;
     rack: string;
     shelf: string;
@@ -18,12 +17,12 @@ export interface Product {
   status: 'In Stock' | 'Low Stock' | 'Out of Stock';
 }
 
-export interface StoreLocation {
+export interface ActivityLog {
   id: string;
-  name: string;
-  address: string;
-  manager: string;
-  status: 'Active' | 'Maintenance';
+  action: string;
+  details: string;
+  user: string;
+  date: string;
 }
 
 export interface Order {
@@ -55,16 +54,15 @@ export interface Supplier {
 
 interface AppState {
   products: Product[];
-  stores: StoreLocation[];
   orders: Order[];
   suppliers: Supplier[];
+  logs: ActivityLog[];
   addProduct: (product: Omit<Product, 'id'>) => void;
   updateStock: (productId: string, quantity: number) => void;
-  updateStoreStock: (storeId: string, productId: string, quantity: number) => void;
-  addStore: (store: Omit<StoreLocation, 'id'>) => void;
   createOrder: (order: Omit<Order, 'id' | 'date'>) => void;
   processOrder: (orderId: string) => void;
   addSupplier: (supplier: Omit<Supplier, 'id'>) => void;
+  addLog: (action: string, details: string) => void;
 }
 
 export const useStore = create<AppState>((set) => ({
@@ -77,7 +75,7 @@ export const useStore = create<AppState>((set) => ({
       stock: 45,
       minStock: 10,
       price: 299.99,
-      location: { storeId: 's1', aisle: 'A1', rack: 'R2', shelf: 'S3', bin: 'B12' },
+      location: { aisle: 'A1', rack: 'R2', shelf: 'S3', bin: 'B12' },
       status: 'In Stock',
     },
     {
@@ -88,7 +86,7 @@ export const useStore = create<AppState>((set) => ({
       stock: 2,
       minStock: 5,
       price: 199.50,
-      location: { storeId: 's1', aisle: 'C4', rack: 'R1', shelf: 'S1', bin: 'B01' },
+      location: { aisle: 'C4', rack: 'R1', shelf: 'S1', bin: 'B01' },
       status: 'Low Stock',
     },
     {
@@ -99,31 +97,8 @@ export const useStore = create<AppState>((set) => ({
       stock: 12,
       minStock: 15,
       price: 599.99,
-      location: { storeId: 's2', aisle: 'A2', rack: 'R5', shelf: 'S2', bin: 'B44' },
+      location: { aisle: 'A2', rack: 'R5', shelf: 'S2', bin: 'B44' },
       status: 'In Stock',
-    },
-  ],
-  stores: [
-    {
-      id: 's1',
-      name: 'Downtown Flagship',
-      address: '123 Main St, New York, NY 10001',
-      manager: 'Sarah Jenkins',
-      status: 'Active',
-    },
-    {
-      id: 's2',
-      name: 'Westside Branch',
-      address: '456 West Ave, Los Angeles, CA 90015',
-      manager: 'David Chen',
-      status: 'Active',
-    },
-    {
-      id: 's3',
-      name: 'Central Warehouse',
-      address: '789 Industrial Pkwy, Chicago, IL 60601',
-      manager: 'Mike Roberts',
-      status: 'Maintenance',
     },
   ],
   orders: [
@@ -154,38 +129,82 @@ export const useStore = create<AppState>((set) => ({
       status: 'Active'
     }
   ],
+  logs: [
+    {
+      id: 'l1',
+      action: 'System Initialized',
+      details: 'Started StoreSync Pro environment.',
+      user: 'System',
+      date: new Date().toISOString(),
+    }
+  ],
 
-  addProduct: (product) => set((state) => ({
-    products: [...state.products, { ...product, id: Math.random().toString(36).substr(2, 9) }]
+  addLog: (action, details) => set((state) => ({
+    logs: [{
+      id: Math.random().toString(36).substr(2, 9),
+      action,
+      details,
+      user: 'Admin',
+      date: new Date().toISOString()
+    }, ...state.logs]
   })),
 
-  updateStock: (productId, quantity) => set((state) => ({
-    products: state.products.map(p => {
+  addProduct: (product) => set((state) => {
+    const newProduct = { ...product, id: Math.random().toString(36).substr(2, 9) };
+    return {
+      products: [...state.products, newProduct],
+      logs: [{
+        id: Math.random().toString(36).substr(2, 9),
+        action: 'Added Product',
+        details: `Created new product: ${product.name} (${product.sku})`,
+        user: 'Admin',
+        date: new Date().toISOString()
+      }, ...state.logs]
+    };
+  }),
+
+  updateStock: (productId, quantity) => set((state) => {
+    let productName = '';
+    const updatedProducts = state.products.map(p => {
       if (p.id === productId) {
+        productName = p.name;
         const newStock = Math.max(0, p.stock + quantity);
         return { 
           ...p, 
           stock: newStock,
-            status: newStock === 0 ? 'Out of Stock' : newStock < p.minStock ? 'Low Stock' : 'In Stock'
+          status: newStock === 0 ? 'Out of Stock' : newStock < p.minStock ? 'Low Stock' : 'In Stock'
         };
       }
       return p;
-    })
-  })),
+    });
 
-  addStore: (store) => set((state) => ({
-    stores: [...state.stores, { ...store, id: Math.random().toString(36).substr(2, 9) }]
-  })),
+    return {
+      products: updatedProducts,
+      logs: [{
+        id: Math.random().toString(36).substr(2, 9),
+        action: 'Updated Stock',
+        details: `Adjusted inventory for ${productName} by ${quantity > 0 ? '+' : ''}${quantity}`,
+        user: 'Admin',
+        date: new Date().toISOString()
+      }, ...state.logs]
+    };
+  }),
 
   createOrder: (order) => set((state) => ({
-    orders: [...state.orders, { ...order, id: Math.random().toString(36).substr(2, 9) }]
+    orders: [...state.orders, { ...order, id: Math.random().toString(36).substr(2, 9) }],
+    logs: [{
+      id: Math.random().toString(36).substr(2, 9),
+      action: 'Created Order',
+      details: `Generated ${order.type} order for ${order.quantity}x ${order.productSku}`,
+      user: 'Admin',
+      date: new Date().toISOString()
+    }, ...state.logs]
   })),
 
   processOrder: (orderId) => set((state) => {
     const order = state.orders.find(o => o.id === orderId);
     if (!order || order.status !== 'Pending') return state;
 
-    // Also update inventory if it's procurement or return to stock
     let updatedProducts = state.products;
     if (order.type === 'Procurement' || order.type === 'Return') {
       updatedProducts = state.products.map(p => {
@@ -194,7 +213,7 @@ export const useStore = create<AppState>((set) => ({
           return {
             ...p,
             stock: newStock,
-              status: newStock === 0 ? 'Out of Stock' : newStock < p.minStock ? 'Low Stock' : 'In Stock'
+            status: newStock === 0 ? 'Out of Stock' : newStock < p.minStock ? 'Low Stock' : 'In Stock'
           };
         }
         return p;
@@ -203,11 +222,25 @@ export const useStore = create<AppState>((set) => ({
 
     return {
       products: updatedProducts,
-      orders: state.orders.map(o => o.id === orderId ? { ...o, status: order.type === 'Procurement' ? 'Received' : 'Processed' } : o)
+      orders: state.orders.map(o => o.id === orderId ? { ...o, status: order.type === 'Procurement' ? 'Received' : 'Processed' } : o),
+      logs: [{
+        id: Math.random().toString(36).substr(2, 9),
+        action: 'Processed Order',
+        details: `Completed ${order.type} order for ${order.productSku}`,
+        user: 'Admin',
+        date: new Date().toISOString()
+      }, ...state.logs]
     };
   }),
 
   addSupplier: (supplier) => set((state) => ({
-    suppliers: [...state.suppliers, { ...supplier, id: Math.random().toString(36).substr(2, 9) }]
+    suppliers: [...state.suppliers, { ...supplier, id: Math.random().toString(36).substr(2, 9) }],
+    logs: [{
+      id: Math.random().toString(36).substr(2, 9),
+      action: 'Added Supplier',
+      details: `Registered new supplier: ${supplier.name}`,
+      user: 'Admin',
+      date: new Date().toISOString()
+    }, ...state.logs]
   }))
 }));

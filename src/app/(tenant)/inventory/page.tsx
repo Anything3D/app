@@ -12,7 +12,7 @@ export default function Inventory() {
 
   const [newProduct, setNewProduct] = useState({
     name: '', sku: '', price: 0, stock: 0,
-    location: { storeId: 's1', aisle: '', rack: '', shelf: '', bin: '' }
+    location: { aisle: '', rack: '', shelf: '', bin: '' }
   });
 
   const handleAddSubmit = (e: React.FormEvent) => {

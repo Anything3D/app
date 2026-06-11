@@ -6,10 +6,10 @@ import Link from 'next/link';
 
 export default function Dashboard() {
   const products = useStore(state => state.products);
-  const stores = useStore(state => state.stores);
+  const logs = useStore(state => state.logs);
 
   const totalRevenue = products.reduce((acc, p) => acc + (p.price * p.stock), 0);
-  const activeStores = stores.filter(s => s.status === 'Active').length;
+  const totalItems = products.reduce((acc, p) => acc + p.stock, 0);
   const lowStockItems = products.filter(p => p.stock < p.minStock);
   const lowStockCount = lowStockItems.length;
 
@@ -37,7 +37,7 @@ export default function Dashboard() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <div>
           <h1>Dashboard</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Welcome back to StoreSync. Here's what's happening today.</p>
+          <p style={{ color: 'var(--text-secondary)' }}>Welcome back to StoreSync Pro. Here's what's happening today.</p>
         </div>
       </div>
 
@@ -48,9 +48,9 @@ export default function Dashboard() {
           <p style={{ fontSize: '0.75rem', color: 'hsl(var(--success))', marginTop: '0.5rem' }}>Calculated from current stock</p>
         </div>
         <div className="card">
-          <h3 style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Active Stores</h3>
-          <p style={{ fontSize: '2rem', fontWeight: 700 }}>{activeStores}</p>
-          <p style={{ fontSize: '0.75rem', color: 'hsl(var(--success))', marginTop: '0.5rem' }}>{stores.length} total registered</p>
+          <h3 style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Total Items in Stock</h3>
+          <p style={{ fontSize: '2rem', fontWeight: 700 }}>{totalItems}</p>
+          <p style={{ fontSize: '0.75rem', color: 'hsl(var(--success))', marginTop: '0.5rem' }}>Across {products.length} unique products</p>
         </div>
         <div className="card" style={{ borderLeft: lowStockCount > 0 ? '4px solid hsl(var(--danger))' : 'none' }}>
           <h3 style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Low Stock Alerts</h3>
